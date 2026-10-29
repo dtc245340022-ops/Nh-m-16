@@ -1,0 +1,16 @@
+# Local secrets and configuration
+**/.env
+!.env.example
+!backend/.env.example
+
+# Local databases and backups
+backend/*.db
+backend/*.db-*
+backups/
+
+# Local environments, dependencies, and generated files
+**/.venv/
+**/node_modules/
+**/__pycache__/
+*.py[cod]
+frontend/dist/
