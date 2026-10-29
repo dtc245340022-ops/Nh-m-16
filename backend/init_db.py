@@ -43,11 +43,20 @@ def create_database():
 def seed_sample_data(engine) -> None:
     now = datetime.now(UTC)
     with Session(engine) as db, db.begin():
+      
         users_by_email = {
             "organizer@example.com": ("Nguyen Minh Anh", "organizer"),
             "author@example.com": ("Tran Bao Linh", "author"),
             "reviewer@example.com": ("Le Quang Huy", "reviewer"),
         }
+
+        admin_email = os.getenv("DEMO_ADMIN_EMAIL", "admin@example.com")
+        admin_password = os.getenv("DEMO_ADMIN_PASSWORD")
+
+        if admin_password:
+            users_by_email[admin_email] = ("Quan tri vien", "admin")
+
+
         users = {}
         for email, (name, role) in users_by_email.items():
             user = db.scalar(select(User).where(User.email == email))
@@ -55,7 +64,9 @@ def seed_sample_data(engine) -> None:
                 user = User(
                     full_name=name,
                     email=email,
-                    password_hash=_hash_password("sample-password"),
+                    password_hash=_hash_password(
+    admin_password if role == "admin" else "sample-password"
+),
                     role=role,
                 )
                 db.add(user)
